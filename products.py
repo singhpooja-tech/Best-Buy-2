@@ -78,21 +78,27 @@ class Product:
 
 class NonStockedProduct(Product):
     def __init__(self, name, price):
-        """ init super from parent class,
-        setting quantity to 0 """
+        """Initialize the NonStockedProduct"""
         super().__init__(name, price, quantity=0)
 
     def set_quantity(self, quantity):
-        """ Override to prevent any changes to quantity"""
+        """Override to prevent any changes to quantity"""
         pass
 
     def buy(self, quantity):
-        """ Non-stocked product, quantity does not affect purchase"""
+        """Apply promotions (if available) when buying a non-stocked product."""
+        if quantity <= 0:
+            raise ValueError("Quantity must be greater than zero.")
+
+        # Apply promotion if it exists
+        if self.promotion:
+            return self.promotion.apply_promotion(self, quantity)
+
+        # Default behavior without promotion
         return self.price * quantity
 
     def show(self):
-        """ Overriding the show method
-        Added Promo text if True"""
+        """Overriding the show method with promotion text if applicable"""
         if self.promotion:
             promo_text = f"Promotion: {self.promotion.name}"
             return f"{self.name}, Price: {self.price} {promo_text}"
